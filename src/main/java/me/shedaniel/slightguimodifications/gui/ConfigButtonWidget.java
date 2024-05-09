@@ -1,8 +1,10 @@
 package me.shedaniel.slightguimodifications.gui;
 
+import me.shedaniel.slightguimodifications.utils.FakeSpriteRenderer;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -15,7 +17,7 @@ public class ConfigButtonWidget extends Button {
     public ConfigButtonWidget(int i, int j, int k, int l, Component component, OnPress onPress) {
         super(i, j, k, l, component, onPress, Supplier::get);
     }
-    
+    private static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         Minecraft minecraftClient = Minecraft.getInstance();
@@ -25,7 +27,9 @@ public class ConfigButtonWidget extends Button {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        graphics.blitNineSliced(WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
+        //graphics.blitNineSliced(WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
+        //graphics.blitSprite(WIDGETS_LOCATION, this.getX(), this.getY(), 0, this.getWidth(), this.getHeight());
+        FakeSpriteRenderer.blitNineSlicedSprite(graphics, WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int j = this.active ? 16777215 : 10526880;
         graphics.pose().pushPose();

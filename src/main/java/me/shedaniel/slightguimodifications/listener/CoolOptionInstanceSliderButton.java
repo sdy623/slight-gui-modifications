@@ -17,7 +17,7 @@ public class CoolOptionInstanceSliderButton<T> extends OptionInstance.OptionInst
     
     public CoolOptionInstanceSliderButton(Options options, int i, int j, int k, int l, OptionInstance<T> instance, OptionInstance.SliderableValueSet<T> sliderableValueSet, OptionInstance.TooltipSupplier<T> tooltipSupplier,
                                           Consumer<T> onValueChanged) {
-        super(options, i, j, k, l, instance, sliderableValueSet, tooltipSupplier, onValueChanged);
+        super(options, i, j, k, l, instance, sliderableValueSet, tooltipSupplier, onValueChanged, true);
         this.instance = instance;
         this.sliderableValueSet = sliderableValueSet;
     }

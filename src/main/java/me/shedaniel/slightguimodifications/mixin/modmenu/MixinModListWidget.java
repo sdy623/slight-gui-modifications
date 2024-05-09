@@ -19,11 +19,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ModListWidget.class)
 public abstract class MixinModListWidget extends AbstractSelectionList {
     public MixinModListWidget(Minecraft client, int width, int height, int top, int bottom, int itemHeight) {
-        super(client, width, height, top, bottom, itemHeight);
+        super(client, width, height, bottom, itemHeight);
+        //bottom or top
     }
-    
-    @Inject(method = "renderList",
-            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/BufferBuilder;begin(Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;Lcom/mojang/blaze3d/vertex/VertexFormat;)V"))
+
+    @Inject(method = "renderListItems(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", at = @At("HEAD"))
     private void preSelectionBufferDraw(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 //        RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
@@ -35,9 +35,8 @@ public abstract class MixinModListWidget extends AbstractSelectionList {
             SlightGuiModifications.setAlpha(alpha);
         }
     }
-    
-    @Inject(method = "renderList",
-            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/Tesselator;end()V", shift = At.Shift.AFTER))
+
+    @Inject(method = "renderListItems(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", at = @At("TAIL"))
     private void postSelectionBufferDraw(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 //        RenderSystem.popMatrix();
         SlightGuiModifications.restoreAlpha();

@@ -15,10 +15,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
+import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,25 +29,26 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @Mixin(Gui.class)
 public class MixinGui {
     @Shadow @Final private Minecraft minecraft;
-    @Shadow private int screenWidth;
+    private int screenWidth;
     public double offsetBeneficial;
     public double offsetTargetBeneficial;
     
     public double offsetNonBeneficial;
     public double offsetTargetNonBeneficial;
-    
+
     @Inject(method = "renderEffects", at = @At("HEAD"))
     private void preRenderStatusEffectOverlay(CallbackInfo ci) {
         double widthBeneficial = 0;
         double widthNonBeneficial = 0;
         for (MobEffectInstance effect : minecraft.player.getActiveEffects()) {
             if (!effect.showIcon()) continue;
-            if (effect.getEffect().isBeneficial()) {
+            if (effect.getEffect().value().isBeneficial()) {
                 widthBeneficial += 25;
             } else {
                 widthNonBeneficial += 25;
@@ -61,7 +64,8 @@ public class MixinGui {
      * @author shedaniel
      */
     @Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true)
-    protected void renderStatusEffectOverlay(GuiGraphics graphics, CallbackInfo ci) {
+    protected void renderStatusEffectOverlay(GuiGraphics graphics, float partialTick, CallbackInfo ci) {
+        this.screenWidth = this.minecraft.getWindow().getScreenWidth();
         if (!SlightGuiModifications.getGuiConfig().fluidStatusEffects) return;
         ci.cancel();
         Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
@@ -75,7 +79,7 @@ public class MixinGui {
             RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
             
             for (MobEffectInstance statusEffectInstance : Ordering.natural().reverse().sortedCopy(collection)) {
-                MobEffect statusEffect = statusEffectInstance.getEffect();
+                MobEffect statusEffect = statusEffectInstance.getEffect().value();
                 if (statusEffectInstance.showIcon()) {
                     double[] x = {this.screenWidth};
                     int[] y = {1};
@@ -108,7 +112,7 @@ public class MixinGui {
                     }
                     graphics.pose().popPose();
                     
-                    TextureAtlasSprite sprite = statusEffectSpriteManager.get(statusEffect);
+                    TextureAtlasSprite sprite = statusEffectSpriteManager.get((Holder<MobEffect>) statusEffect);
                     list.add(() -> {
                         if (alpha[0] <= 0.01) return;
                         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
@@ -127,10 +131,10 @@ public class MixinGui {
             Window window = minecraft.getWindow();
             Matrix4f matrix4f = new Matrix4f().setOrtho(0.0F, (float) (window.getWidth() / window.getGuiScale()), 0.0F, (float) (window.getHeight() / window.getGuiScale()), 1000.0F, 3000.0F);
             RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
-            PoseStack poseStack = RenderSystem.getModelViewStack();
-            poseStack.setIdentity();
-            poseStack.translate(0.0D, 0.0D, -2000.0D);
-            RenderSystem.applyModelViewMatrix();
+            Matrix4fStack poseStack = RenderSystem.getModelViewStack();
+            poseStack.identity();
+            poseStack.translate(0.0F, 0.0F, -2000.0F);
+            RenderSystem.applyModelViewMatrix ();
             Lighting.setupFor3DItems();
         }
     }

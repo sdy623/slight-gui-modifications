@@ -42,7 +42,7 @@ public abstract class MixinServerSelectionList$OnlineServerEntry {
                             new TextMenuEntry(I18n.get("selectServer.edit"), () -> {
                                 ((MenuWidgetListener) screen).removeMenu();
                                 ServerData serverInfo = getServerData();
-                                screen.editingServer = new ServerData(serverInfo.name, serverInfo.ip, false);
+                                screen.editingServer = new ServerData(serverInfo.name, serverInfo.ip, ServerData.Type.OTHER); //add last para in 1.20.6
                                 screen.editingServer.copyFrom(serverInfo);
                                 this.minecraft.setScreen(new EditServerScreen(screen, screen::editServerCallback, screen.editingServer));
                             }),
@@ -61,7 +61,7 @@ public abstract class MixinServerSelectionList$OnlineServerEntry {
                             new TextMenuEntry(I18n.get("selectServer.select"), () -> {
                                 ((MenuWidgetListener) screen).removeMenu();
                                 ServerData serverData = getServerData();
-                                ConnectScreen.startConnecting(this.screen, this.minecraft, ServerAddress.parseString(serverData.ip), serverData, false);
+                                ConnectScreen.startConnecting(this.screen, this.minecraft, ServerAddress.parseString(serverData.ip), serverData, false, null); //add last para in 1.20.6
                             })
                     )
             ));

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(InventoryScreen.class)
 public class MixinInventoryScreen {
     @ModifyVariable(method = "renderEntityInInventory", ordinal = 1, at = @At("HEAD"))
-    private static int drawEntityChangeY(int y) {
-        return SlightGuiModifications.applyYAnimation(y);
+    private static float drawEntityChangeY(float y) {
+        return (float) SlightGuiModifications.applyYAnimation(y);
     }
 }

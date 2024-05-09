@@ -233,7 +233,7 @@ public class SlightGuiModifications implements ClientModInitializer {
 //            }
 //        });
         reloadCtsAsync();
-        RRPCallback.AFTER_VANILLA.register(packs -> {
+        /*RRPCallback.AFTER_VANILLA.register(packs -> {
             RuntimeResourcePack pack = RuntimeResourcePack.create("slightguimodifications:cts_textures");
             Path buttons = FabricLoader.getInstance().getConfigDir().resolve("slightguimodifications/buttons.png");
             if (Files.exists(buttons)) {
@@ -268,7 +268,7 @@ public class SlightGuiModifications implements ClientModInitializer {
                 }
             }
             packs.add(pack);
-        });
+        });*/
     }
     
     public static final LazyResettable<Cts> CTS = new LazyResettable<>(Cts::new);

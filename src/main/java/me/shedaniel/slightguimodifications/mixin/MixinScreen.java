@@ -146,7 +146,7 @@ public abstract class MixinScreen extends AbstractContainerEventHandler implemen
         this.currentFade = currentFade;
     }
     
-    @Redirect(method = "renderBackground",
+    @Redirect(method = "renderTransparentBackground",
               at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fillGradient(IIIIII)V"))
     private void fillGradientRedirect(GuiGraphics graphics, int top, int left, int right, int bottom, int color1, int color2) {
         if (this.renderingState == 2) {
@@ -164,17 +164,17 @@ public abstract class MixinScreen extends AbstractContainerEventHandler implemen
     }
     
     
-    @Inject(method = "renderDirtBackground",
+    @Inject(method = "renderBackground",
             at = @At(value = "HEAD"))
-    private void preRenderDirtBackground(GuiGraphics graphics, CallbackInfo ci) {
+    private void preRenderDirtBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (this.renderingState == 2) {
             this.renderingState = 0;
         }
     }
     
-    @Inject(method = "renderDirtBackground",
+    @Inject(method = "renderBackground",
             at = @At("RETURN"))
-    private void postRenderDirtBackground(GuiGraphics graphics, CallbackInfo ci) {
+    private void postRenderDirtBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         this.renderingState = 2;
     }
     

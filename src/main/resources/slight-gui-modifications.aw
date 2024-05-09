@@ -9,8 +9,6 @@ accessible method net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerSc
 accessible method net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen deleteCallback (Z)V
 accessible field com/mojang/blaze3d/platform/NativeImage useStbFree Z
 accessible method net/minecraft/client/gui/GuiGraphics innerBlit (Lnet/minecraft/resources/ResourceLocation;IIIIIFFFF)V
-accessible field net/minecraft/client/gui/screens/TitleScreen panorama Lnet/minecraft/client/renderer/PanoramaRenderer;
-accessible field net/minecraft/client/gui/screens/TitleScreen PANORAMA_OVERLAY Lnet/minecraft/resources/ResourceLocation;
 accessible class net/minecraft/client/gui/components/toasts/ToastComponent$ToastInstance
 accessible class net/minecraft/client/gui/screens/inventory/MerchantScreen$TradeOfferButton
 accessible class net/minecraft/client/OptionInstance$ValueSet
@@ -18,4 +16,5 @@ accessible class net/minecraft/client/OptionInstance$SliderableOrCyclableValueSe
 accessible class net/minecraft/client/OptionInstance$SliderableValueSet
 accessible class net/minecraft/client/OptionInstance$OptionInstanceSliderButton
 extendable class net/minecraft/client/OptionInstance$OptionInstanceSliderButton
-accessible method net/minecraft/client/OptionInstance$OptionInstanceSliderButton <init> (Lnet/minecraft/client/Options;IIIILnet/minecraft/client/OptionInstance;Lnet/minecraft/client/OptionInstance$SliderableValueSet;Lnet/minecraft/client/OptionInstance$TooltipSupplier;Ljava/util/function/Consumer;)V
+accessible method net/minecraft/client/OptionInstance$OptionInstanceSliderButton <init> (Lnet/minecraft/client/Options;IIIILnet/minecraft/client/OptionInstance;Lnet/minecraft/client/OptionInstance$SliderableValueSet;Lnet/minecraft/client/OptionInstance$TooltipSupplier;Ljava/util/function/Consumer;Z)V
+extendable method net/minecraft/client/gui/components/AbstractWidget render (Lnet/minecraft/client/gui/GuiGraphics;IIF)V

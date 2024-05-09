@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.shedaniel.slightguimodifications.SlightGuiModifications;
 import me.shedaniel.slightguimodifications.config.SlightGuiModificationsConfig;
+import me.shedaniel.slightguimodifications.utils.FakeSpriteRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractSliderButton.class)
 public abstract class MixinAbstractSliderButton extends AbstractWidget {
+    private static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
     public MixinAbstractSliderButton(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
@@ -79,8 +81,8 @@ public abstract class MixinAbstractSliderButton extends AbstractWidget {
         }
     }
     
-    @Redirect(method = "renderWidget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitNineSliced(Lnet/minecraft/resources/ResourceLocation;IIIIIIIIII)V"))
-    private void renderBg(GuiGraphics graphics, ResourceLocation los, int x, int y, int w, int h, int j, int k, int l, int m, int n, int o) {
+    @Redirect(method = "renderWidget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V"))
+    private void renderBg(GuiGraphics graphics, ResourceLocation los, int x, int y, int w, int h) {
         SlightGuiModificationsConfig.Gui config = SlightGuiModifications.getGuiConfig();
         if (config.sliderModifications.enabled) {
             int grabberWidth = config.sliderModifications.grabberWidth;
@@ -90,6 +92,6 @@ public abstract class MixinAbstractSliderButton extends AbstractWidget {
                 return;
             }
         }
-        graphics.blitNineSliced(los, x, y, w, h, j, k, l, m, n, o);
+        graphics.blitSprite(los, x, y, w, h);
     }
 }

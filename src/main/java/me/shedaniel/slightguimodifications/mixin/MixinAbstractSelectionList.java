@@ -30,19 +30,19 @@ public class MixinAbstractSelectionList {
 //        RenderSystem.popMatrix();
 //    }
     
-    @Inject(method = "render",
+    @Inject(method = "renderListSeparators",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIFFIIII)V"))
-    private void preBufferDraw(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-//        RenderSystem.pushMatrix();
-        RenderSystem.enableBlend();
-//        RenderSystem.disableAlphaTest();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
-//        RenderSystem.shadeModel(GL11.GL_SMOOTH);
+    private void preBufferDraw(GuiGraphics guiGraphics, CallbackInfo ci) {
+        //guiGraphics.pose().pushPose();
+        //RenderSystem.enableBlend();
+        //RenderSystem.disableAlphaTest();
+        //RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
+        //RenderSystem.applyModelViewMatrix(); //edit
     }
     
-    @Inject(method = "render",
+    @Inject(method = "renderListBackground",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIFFIIII)V", shift = At.Shift.AFTER))
-    private void postBufferDraw(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-//        RenderSystem.popMatrix();
+    private void postBufferDraw(GuiGraphics guiGraphics, CallbackInfo ci) {
+        //guiGraphics.pose().pushPose();
     }
 }

@@ -83,7 +83,7 @@ public class SubMenuEntry extends MenuEntry {
     }
     
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {return menuWidget != null && !menuWidget.children().isEmpty() && selected && menuWidget.mouseScrolled(mouseX, mouseY, amount);}
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {return menuWidget != null && !menuWidget.children().isEmpty() && selected && menuWidget.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);}
     
     @Override
     public List<? extends GuiEventListener> children() {

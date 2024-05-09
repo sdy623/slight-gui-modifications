@@ -49,12 +49,12 @@ public abstract class MixinTitleScreen extends Screen {
     private void preRender(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         this.lastMatrices = graphics;
     }
-    
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PanoramaRenderer;render(FF)V"))
-    private void thing(PanoramaRenderer rotatingCubeMapRenderer, float delta, float alpha) {
+
+    @Redirect(method = "renderPanorama", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PanoramaRenderer;render(Lnet/minecraft/client/gui/GuiGraphics;IIFF)V"))
+    private void thing(PanoramaRenderer rotatingCubeMapRenderer, GuiGraphics guiGraphics, int width, int height, float fade, float partialTick) {
         Cts cts = SlightGuiModifications.getCtsConfig();
         if (!cts.enabled) {
-            rotatingCubeMapRenderer.render(delta, alpha);
+            rotatingCubeMapRenderer.render(guiGraphics, width, height, fade, partialTick);
         } else {
             lastMatrices.fill(0, 0, this.width, this.height, 0xFF000000);
             int tmp = ((AnimationListener) this).slightguimodifications_getAnimationState();
@@ -64,24 +64,13 @@ public abstract class MixinTitleScreen extends Screen {
             Collections.reverse(list);
             for (Cts.BackgroundInfo info : list) {
                 if (info.getAlpha() > 0)
-                    info.render(lastMatrices, (TitleScreen) (Object) this, delta, alpha);
+                    info.render(lastMatrices, (TitleScreen) (Object) this, partialTick, fade);
             }
             ((AnimationListener) this).slightguimodifications_setAnimationState(tmp);
         }
         lastMatrices = null;
     }
-    
-    @Redirect(method = "render", at = @At(value = "INVOKE",
-                                          target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIFFIIII)V"))
-    private void thing(GuiGraphics graphics, ResourceLocation los, int x, int y, int width, int height, float u, float v, int uWidth, int vHeight, int texWidth, int texHeight) {
-        if (!SlightGuiModifications.getCtsConfig().enabled || SlightGuiModifications.getCtsConfig().renderGradientShade) {
-            int tmp = ((AnimationListener) this).slightguimodifications_getAnimationState();
-            ((AnimationListener) this).slightguimodifications_setAnimationState(0);
-            graphics.blit(los, x, y, width, height, u, v, uWidth, vHeight, texWidth, texHeight);
-            ((AnimationListener) this).slightguimodifications_setAnimationState(tmp);
-        }
-    }
-    
+
     @Inject(method = "init",
             at = @At(value = "TAIL"))
     private void postInit(CallbackInfo ci) {

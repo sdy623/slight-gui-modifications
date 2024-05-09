@@ -39,8 +39,8 @@ public abstract class MixinOptionInstance<T> {
             };
         }
     }
-    
-    @Inject(method = "createButton", at = @At("HEAD"), cancellable = true)
+
+    @Inject(method = "createButton(Lnet/minecraft/client/Options;III)Lnet/minecraft/client/gui/components/AbstractWidget;", at = @At("HEAD"), cancellable = true)
     private void createButton(Options options, int x, int y, int width, CallbackInfoReturnable<AbstractWidget> cir) {
         OptionInstance<T> optionInstance = (OptionInstance<T>) (Object) this;
         if (SlightGuiModifications.getGuiConfig().customScaling.modifyVanillaScaleSlider && optionInstance == options.guiScale()) {

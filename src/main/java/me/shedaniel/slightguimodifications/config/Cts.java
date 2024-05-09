@@ -11,11 +11,13 @@ import me.shedaniel.slightguimodifications.SlightGuiModifications;
 import me.shedaniel.slightguimodifications.gui.cts.elements.WidgetElement;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,8 +65,17 @@ public class Cts {
     public static class DefaultBackgroundInfo extends BackgroundInfo {
         @Override
         public void render(GuiGraphics graphics, TitleScreen screen, float delta, float alpha) {
-            RenderSystem.setShaderTexture(0, TitleScreen.PANORAMA_OVERLAY);
-            screen.panorama.render(delta, Mth.clamp(alpha * getAlpha(), 0.0F, 1.0F));
+            RenderSystem.setShaderTexture(0, PanoramaRenderer.PANORAMA_OVERLAY);
+            try {
+                // 获取 renderPanorama 方法的引用，假设它需要两个参数: float 和 float
+                Method renderPanoramaMethod = TitleScreen.class.getDeclaredMethod("renderPanorama", float.class, float.class);
+                renderPanoramaMethod.setAccessible(true); // 设置为可访问
+
+                // 调用 renderPanorama 方法
+                renderPanoramaMethod.invoke(screen, delta, Mth.clamp(alpha * getAlpha(), 0.0F, 1.0F));
+            } catch (Exception e) {
+                e.printStackTrace(); // 打印出错信息，实际环境中可能需要更合适的错误处理
+            }
         }
     }
     

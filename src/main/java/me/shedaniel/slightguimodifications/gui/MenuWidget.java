@@ -108,13 +108,13 @@ public class MenuWidget extends AbstractContainerEventHandler implements Rendera
     }
     
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (getInnerBounds().contains(mouseX, mouseY)) {
-            scrolling.offset(ClothConfigInitializer.getScrollStep() * -amount, true);
+            scrolling.offset(ClothConfigInitializer.getScrollStep() * -Math.hypot(horizontalAmount, verticalAmount), true);
             return true;
         }
-        for (MenuEntry child : children()) if (child instanceof SubMenuEntry && child.mouseScrolled(mouseX, mouseY, amount)) return true;
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        for (MenuEntry child : children()) if (child instanceof SubMenuEntry && child.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) return true;
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
     
     @Override

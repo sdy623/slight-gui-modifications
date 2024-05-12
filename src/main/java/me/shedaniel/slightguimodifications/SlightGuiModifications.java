@@ -158,7 +158,29 @@ public class SlightGuiModifications implements ClientModInitializer {
         }
         return alpha;
     }
-    
+
+    public static NativeImage applyRoundedCorners(NativeImage image, int radius) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (isPixelInCorner(x, y, width, height, radius)) {
+                    image.setPixelRGBA(x, y, 0);  // 设置透明或其他背景色
+                }
+            }
+        }
+        return image;
+    }
+
+    private static boolean isPixelInCorner(int x, int y, int width, int height, int radius) {
+        // 这里需要实现逻辑来确定像素是否在圆角范围内
+        return (Math.pow(x - radius, 2) + Math.pow(y - radius, 2) > Math.pow(radius, 2)) &&
+                (Math.pow(x - (width - radius), 2) + Math.pow(y - radius, 2) > Math.pow(radius, 2)) &&
+                (Math.pow(x - radius, 2) + Math.pow(y - (height - radius), 2) > Math.pow(radius, 2)) &&
+                (Math.pow(x - (width - radius), 2) + Math.pow(y - (height - radius), 2) > Math.pow(radius, 2));
+    }
+
     public static void startPrettyScreenshot(NativeImage cloneImage) {
         if (prettyScreenshotTexture != null) {
             lastPrettyScreenshotTexture = prettyScreenshotTexture;
@@ -168,10 +190,12 @@ public class SlightGuiModifications implements ClientModInitializer {
         prettyScreenshotTextureId = null;
         prettyScreenshotTime = -1;
         if (cloneImage != null) {
-            prettyScreenshotTexture = new DynamicTexture(cloneImage);
+            NativeImage roundedImage = applyRoundedCorners(cloneImage, 20);  // 假设圆角半径为20
+            prettyScreenshotTexture = new DynamicTexture(roundedImage);
             prettyScreenshotTextureId = Minecraft.getInstance().getTextureManager().register("slight-gui-modifications-pretty-screenshots", prettyScreenshotTexture);
         }
     }
+
     
     @Override
     public void onInitializeClient() {

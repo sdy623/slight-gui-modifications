@@ -29,7 +29,9 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.*;
-import net.minecraft.client.gui.screens.controls.ControlsScreen;
+import net.minecraft.client.gui.screens.options.SoundOptionsScreen;
+import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
+import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -206,7 +208,7 @@ public class SlightGuiModifications implements ClientModInitializer {
                                 ImmutableList.of(
                                         new TextMenuEntry(I18n.get("options.video").replace("...", ""), () -> {
                                             ((MenuWidgetListener) screen).removeMenu();
-                                            client.setScreen(new VideoSettingsScreen(screen, client.options));
+                                            client.setScreen(new VideoSettingsScreen(screen, Minecraft.getInstance(), client.options));
                                         }),
                                         new TextMenuEntry(I18n.get("options.controls").replace("...", ""), () -> {
                                             ((MenuWidgetListener) screen).removeMenu();

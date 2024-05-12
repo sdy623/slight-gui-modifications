@@ -41,7 +41,6 @@ dependencies {
     minecraft("com.mojang:minecraft:${project.minecraft_version}")
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:2024.05.01@zip")
     }
     optionally("net.fabricmc:fabric-loader:${project.loader_version}")
 
@@ -51,7 +50,7 @@ dependencies {
     depend("com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}")
     optionally("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
     optionally("com.terraformersmc:modmenu:${project.modmenu_version}")
-    optionally("dev.architectury:architectury-fabric:${project.architectury_version}")
+    //optionally("dev.architectury:architectury-fabric:${project.architectury_version}")
     optionally("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config}")
     depend("net.devtech:arrp:${project.arrp_version}")
     depend("org.codehaus.groovy:groovy-jsr223:3.0.21")

@@ -3,7 +3,7 @@ package me.shedaniel.slightguimodifications.mixin;
 import me.shedaniel.slightguimodifications.SlightGuiModifications;
 import me.shedaniel.slightguimodifications.gui.ConfigButtonWidget;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;

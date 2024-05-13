@@ -29,7 +29,6 @@ import java.util.List;
 
 @Mixin(Screen.class)
 public abstract class MixinScreen extends AbstractContainerEventHandler implements Renderable, AnimationListener, MenuWidgetListener {
-    @Shadow
     public int height;
     
     @Shadow @Final protected List<GuiEventListener> children;

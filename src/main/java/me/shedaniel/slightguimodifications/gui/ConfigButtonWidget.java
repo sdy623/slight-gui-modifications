@@ -28,8 +28,8 @@ public class ConfigButtonWidget extends Button {
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         //graphics.blitNineSliced(WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
-        //graphics.blitSprite(WIDGETS_LOCATION, this.getX(), this.getY(), 0, this.getWidth(), this.getHeight());
-        FakeSpriteRenderer.blitNineSlicedSprite(graphics, WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200);
+        graphics.blitSprite(WIDGETS_LOCATION, this.getX(), this.getY(), 0, this.getWidth(), this.getHeight());
+        //FakeSpriteRenderer.blitNineSlicedSprite(graphics, WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int j = this.active ? 16777215 : 10526880;
         graphics.pose().pushPose();

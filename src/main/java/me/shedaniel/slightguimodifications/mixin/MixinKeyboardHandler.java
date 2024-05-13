@@ -16,8 +16,13 @@ public class MixinKeyboardHandler {
                                           target = "Lnet/minecraft/client/Screenshot;grab(Ljava/io/File;Lcom/mojang/blaze3d/pipeline/RenderTarget;Ljava/util/function/Consumer;)V"))
     private void preSaveScreenshot(long window, int key, int scancode, int i, int j, CallbackInfo ci) {
         SlightGuiModifications.startPrettyScreenshot(null);
-        if (SlightGuiModifications.getGuiConfig().satisfyingScreenshots) {
+        if (SlightGuiModifications.getGuiConfig().enhancedScreenshots.satisfyingScreenshots) {
             SlightGuiModifications.prettyScreenshots = true;
+            if(SlightGuiModifications.getGuiConfig().enhancedScreenshots.withcorner == true){
+                SlightGuiModifications.withRoundCorner = true;
+                SlightGuiModifications.roundedcornerRadius = SlightGuiModifications.getGuiConfig().enhancedScreenshots.cornerRadius;
+                SlightGuiModifications.roundedcornerBorderWidth = SlightGuiModifications.getGuiConfig().enhancedScreenshots.borderWidth;
+            }
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_TOAST_IN, 10f, 3f));
         }
     }

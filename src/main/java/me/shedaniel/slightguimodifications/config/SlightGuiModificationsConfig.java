@@ -40,11 +40,13 @@ public class SlightGuiModificationsConfig extends PartitioningSerializer.GlobalD
         public SlotHighlight slotHighlight = new SlotHighlight();
         @ConfigEntry.Gui.CollapsibleObject
         public TooltipModifications tooltipModifications = new TooltipModifications();
+        @ConfigEntry.Gui.CollapsibleObject
+        public EnhancedScreenshots enhancedScreenshots = new EnhancedScreenshots();
         @Comment("Whether GUI should allow right click actions.")
         @ConfigEntry.Gui.Tooltip()
         public boolean rightClickActions = false;
-        public boolean satisfyingScreenshots = false;
-        
+        //public boolean satisfyingScreenshots = false;
+
         public static class OpeningAnimation {
             public boolean fluidChatOpening = false;
             public boolean fluidOpenSlideFromBottom = false;
@@ -123,7 +125,7 @@ public class SlightGuiModificationsConfig extends PartitioningSerializer.GlobalD
         }
         
         public static class TooltipModifications {
-            @Comment("Whether this module is enabled.")
+            @Comment("Whether this module is enabled.") @ConfigEntry.Gui.Tooltip()
             public boolean enabled = false;
             @ConfigEntry.ColorPicker(allowAlpha = true)
             public int backgroundColor = 0xf0100010;
@@ -132,7 +134,17 @@ public class SlightGuiModificationsConfig extends PartitioningSerializer.GlobalD
             @ConfigEntry.ColorPicker(allowAlpha = true)
             public int outlineGradientBottomColor = 0x5028007f;
         }
-        
+
+        public static class EnhancedScreenshots{
+            @Comment("Whether this module is enabled.") @ConfigEntry.Gui.Tooltip()
+            public boolean satisfyingScreenshots = false;
+            public boolean withcorner = false;
+            @ConfigEntry.BoundedDiscrete(min = 1, max = 300)
+            public int cornerRadius = 120;
+            @ConfigEntry.BoundedDiscrete(min = 1, max = 100)
+            public int borderWidth = 45;
+        }
+
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.FIELD)
         public @interface ScaleSlider {}

@@ -48,6 +48,11 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+
 import static me.shedaniel.autoconfig.util.Utils.getUnsafely;
 import static me.shedaniel.autoconfig.util.Utils.setUnsafely;
 
@@ -56,6 +61,9 @@ public class SlightGuiModifications implements ClientModInitializer {
     public static final ResourceLocation TEXT_FIELD_TEXTURE = new ResourceLocation("textures/gui/text_field.png");
     public static float lastAlpha = -1;
     public static boolean prettyScreenshots = false;
+    public static boolean withRoundCorner = false;
+    public static int roundedcornerRadius = 120;
+    public static int roundedcornerBorderWidth = 35;
     public static DynamicTexture prettyScreenshotTexture = null;
     public static DynamicTexture lastPrettyScreenshotTexture = null;
     public static ResourceLocation prettyScreenshotTextureId = null;
@@ -159,27 +167,99 @@ public class SlightGuiModifications implements ClientModInitializer {
         return alpha;
     }
 
-    public static NativeImage applyRoundedCorners(NativeImage image, int radius) {
+    public static BufferedImage applyEffects(BufferedImage image, int cornerRadius, int shadowSize) {
         int width = image.getWidth();
         int height = image.getHeight();
+        int shadowRgb = new Color(0, 0, 0, 154).getRGB(); // 半透明黑色阴影
+
+        // 创建一个更大的图像以容纳阴影
+        BufferedImage outputImage = new BufferedImage(width + shadowSize * 2, height + shadowSize * 2, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = outputImage.createGraphics();
+
+        // 启用抗锯齿
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // 绘制阴影
+        g2.setColor(new Color(0, 0, 0, 160)); // 半透明黑色
+        g2.fill(new RoundRectangle2D.Float(shadowSize, shadowSize, width, height, cornerRadius, cornerRadius));
+
+        // 绘制圆角矩形图像
+        g2.setComposite(AlphaComposite.SrcOver); // 确保图像在阴影上方
+        g2.setColor(Color.WHITE);
+        g2.fill(new RoundRectangle2D.Float(0, 0, width, height, cornerRadius, cornerRadius));
+
+        // 绘制实际图像
+        g2.setClip(new RoundRectangle2D.Float(0, 0, width, height, cornerRadius, cornerRadius));
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+
+        return outputImage;
+    }
+
+    public static BufferedImage nativeImageToBufferedImage(NativeImage nativeImage) {
+        BufferedImage bufferedImage = new BufferedImage(nativeImage.getWidth(), nativeImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        for (int y = 0; y < nativeImage.getHeight(); y++) {
+            for (int x = 0; x < nativeImage.getWidth(); x++) {
+                int argb = nativeImage.getPixelRGBA(x, y);
+                int a = (argb >> 24) & 0xFF;
+                int r = (argb >> 16) & 0xFF;
+                int g = (argb >> 8) & 0xFF;
+                int b = argb & 0xFF;
+                int rgba = (a << 24) | (r << 16) | (g << 8) | b;
+                bufferedImage.setRGB(x, y, rgba);
+            }
+        }
+
+        return bufferedImage;
+    }
+
+    public static NativeImage bufferedImageToNativeImage(BufferedImage bufferedImage) {
+        NativeImage nativeImage = new NativeImage(bufferedImage.getWidth(), bufferedImage.getHeight(), true);
+        for (int y = 0; y < bufferedImage.getHeight(); y++) {
+            for (int x = 0; x < bufferedImage.getWidth(); x++) {
+                int rgba = bufferedImage.getRGB(x, y);
+                nativeImage.setPixelRGBA(x, y, rgba);
+            }
+        }
+        return nativeImage;
+    }
+
+    public static NativeImage applyRoundedCorners(NativeImage image, int cornerRadius, int borderWidth) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        NativeImage newImage = new NativeImage(width, height, true);
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (isPixelInCorner(x, y, width, height, radius)) {
-                    image.setPixelRGBA(x, y, 0);  // 设置透明或其他背景色
+                if (isInCorner(x, y, width, height, cornerRadius) && !isNearEdge(x, y, width, height, borderWidth, cornerRadius)) {
+                    newImage.setPixelRGBA(x, y, 0x00000000);  // Make corners transparent
+                } else if (isNearEdge(x, y, width, height, borderWidth, cornerRadius)) {
+                    newImage.setPixelRGBA(x, y, 0xFFFFFFFF);  // Draw white border
+                } else {
+                    int originalPixel = image.getPixelRGBA(x, y);
+                    newImage.setPixelRGBA(x, y, originalPixel);  // Copy original pixel
                 }
             }
         }
-        return image;
+
+        return newImage;
     }
 
-    private static boolean isPixelInCorner(int x, int y, int width, int height, int radius) {
-        // 这里需要实现逻辑来确定像素是否在圆角范围内
-        return (Math.pow(x - radius, 2) + Math.pow(y - radius, 2) > Math.pow(radius, 2)) &&
-                (Math.pow(x - (width - radius), 2) + Math.pow(y - radius, 2) > Math.pow(radius, 2)) &&
-                (Math.pow(x - radius, 2) + Math.pow(y - (height - radius), 2) > Math.pow(radius, 2)) &&
-                (Math.pow(x - (width - radius), 2) + Math.pow(y - (height - radius), 2) > Math.pow(radius, 2));
+    private static boolean isInCorner(int x, int y, int width, int height, int radius) {
+        int centerX = width - radius;
+        int centerY = height - radius;
+        return (x < radius && y < radius && Math.sqrt(Math.pow(radius - x, 2) + Math.pow(radius - y, 2)) > radius) ||
+                (x >= centerX && y < radius && Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(radius - y, 2)) > radius) ||
+                (x < radius && y >= centerY && Math.sqrt(Math.pow(radius - x, 2) + Math.pow(y - centerY, 2)) > radius) ||
+                (x >= centerX && y >= centerY && Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)) > radius);
     }
+
+    private static boolean isNearEdge(int x, int y, int width, int height, int borderWidth, int cornerRadius) {
+        // Check if the point is in the border width range, allowing the border to extend into the corners
+        return (x < borderWidth || x >= width - borderWidth) || (y < borderWidth || y >= height - borderWidth);
+    }
+
 
     public static void startPrettyScreenshot(NativeImage cloneImage) {
         if (prettyScreenshotTexture != null) {
@@ -190,12 +270,22 @@ public class SlightGuiModifications implements ClientModInitializer {
         prettyScreenshotTextureId = null;
         prettyScreenshotTime = -1;
         if (cloneImage != null) {
-            NativeImage roundedImage = applyRoundedCorners(cloneImage, 20);  // 假设圆角半径为20
-            prettyScreenshotTexture = new DynamicTexture(roundedImage);
+            if (SlightGuiModifications.getGuiConfig().enhancedScreenshots.withcorner){
+                /*
+                BufferedImage bufferedImage = nativeImageToBufferedImage(cloneImage);
+                BufferedImage roundedImage = applyEffects(bufferedImage, roundedcornerRadius, roundedcornerBorderWidth);
+                NativeImage finalImage = bufferedImageToNativeImage(roundedImage);
+                prettyScreenshotTexture = new DynamicTexture(finalImage);
+                */
+                NativeImage roundedImage = applyRoundedCorners(cloneImage, roundedcornerRadius, roundedcornerBorderWidth);
+                prettyScreenshotTexture = new DynamicTexture(roundedImage);
+            }
+            else {
+                prettyScreenshotTexture = new DynamicTexture(cloneImage);
+            }
             prettyScreenshotTextureId = Minecraft.getInstance().getTextureManager().register("slight-gui-modifications-pretty-screenshots", prettyScreenshotTexture);
         }
     }
-
     
     @Override
     public void onInitializeClient() {

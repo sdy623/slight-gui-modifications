@@ -24,7 +24,7 @@ public abstract class MixinScreenshot {
     @ModifyVariable(method = "_grab", at = @At(value = "HEAD"), ordinal = 0)
     private static Consumer<Component> saveScreenshotInner(Consumer<Component> textConsumer) {
         return text -> {
-            if (SlightGuiModifications.getGuiConfig().satisfyingScreenshots)
+            if (SlightGuiModifications.getGuiConfig().enhancedScreenshots.satisfyingScreenshots)
                 return;
             textConsumer.accept(text);
         };
